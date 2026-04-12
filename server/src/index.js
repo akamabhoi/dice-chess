@@ -9,7 +9,8 @@ const app = express();
 const allowedOrigins = [
   'https://dice-chess-nine.vercel.app',
   'http://localhost:5173',
-  'http://localhost:4173'
+  'http://localhost:4173',
+  'https://dice-chess-production.up.railway.app'
 ];
 app.use(cors({
   origin: allowedOrigins,
