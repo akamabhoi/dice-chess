@@ -11,7 +11,11 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["https://dice-chess-nine.vercel.app/", "http://localhost:5173"],
+    origin: [
+      "https://dice-chess-nine.vercel.app",
+      "http://localhost:5173",
+      "http://localhost:4173"
+    ],
     methods: ["GET", "POST"]
   }
 });
