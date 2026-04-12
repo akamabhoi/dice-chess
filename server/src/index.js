@@ -115,6 +115,10 @@ io.on('connection', (socket) => {
   });
 });
 
+app.get('/', (req, res) => {
+  res.json({ status: 'Dice Chess server is running' });
+});
+
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`Dice Chess server running on port ${PORT}`);
