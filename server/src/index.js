@@ -6,17 +6,22 @@ const { v4: uuidv4 } = require('uuid');
 const GameEngine = require('./game/Engine');
 
 const app = express();
-app.use(cors());
+const allowedOrigins = [
+  'https://dice-chess-nine.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:4173'
+];
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      "https://dice-chess-nine.vercel.app",
-      "http://localhost:5173",
-      "http://localhost:4173"
-    ],
-    methods: ["GET", "POST"]
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
