@@ -11,7 +11,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: ["https://dice-chess-nine.vercel.app/", "http://localhost:5173"],
     methods: ["GET", "POST"]
   }
 });
@@ -41,10 +41,10 @@ io.on('connection', (socket) => {
 
     const game = new GameEngine(sessionId, config, io);
     sessions.set(sessionId, game);
-    
+
     // Auto-join the creator
     game.joinPlayer(socket, 'white', userId);
-    
+
     if (callback) callback({ sessionId });
   });
 
@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
       if (callback) callback({ error: 'Game not found' });
       return;
     }
-    
+
     // In PvE, only 'white' should be joined by the actual player.
     // In PvP, the second player joins as 'black'.
     if (game.config.mode === 'pvp' && !game.players.black && game.players.white !== userId) {
@@ -67,11 +67,11 @@ io.on('connection', (socket) => {
       if (callback) callback({ error: 'Match in progress. Play with someone else.' });
       return;
     } else if (game.players.white === userId) {
-       game.sockets.white = socket.id;
-       game.attachSocketListeners(socket, userId);
+      game.sockets.white = socket.id;
+      game.attachSocketListeners(socket, userId);
     } else if (game.players.black === userId) {
-       game.sockets.black = socket.id;
-       game.attachSocketListeners(socket, userId);
+      game.sockets.black = socket.id;
+      game.attachSocketListeners(socket, userId);
     }
 
     if (callback) callback({ success: true, state: game.getState() });
