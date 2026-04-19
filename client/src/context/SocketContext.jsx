@@ -6,21 +6,22 @@ const SocketContext = createContext(null);
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [gameState, setGameState] = useState(null);
-  
-  // Persist a unique ID for this browser session
+
+  // Use sessionStorage so each browser TAB gets its own unique userId.
+  // This allows local multiplayer testing with two tabs.
   const [userId] = useState(() => {
-    let id = localStorage.getItem('dice_chess_user_id');
+    let id = sessionStorage.getItem('dice_chess_user_id');
     if (!id) {
       id = Math.random().toString(36).substring(2, 15);
-      localStorage.setItem('dice_chess_user_id', id);
+      sessionStorage.setItem('dice_chess_user_id', id);
     }
     return id;
   });
 
   useEffect(() => {
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const socketInstance = io(BACKEND_URL);
-    
+
     setSocket(socketInstance);
 
     socketInstance.on('game_state', (state) => {

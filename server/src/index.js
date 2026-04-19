@@ -6,24 +6,28 @@ const { v4: uuidv4 } = require('uuid');
 const GameEngine = require('./game/Engine');
 
 const app = express();
-const allowedOrigins = [
-  'https://dice-chess-nine.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:4173',
-  'https://dice-chess-production.up.railway.app/'
-];
-app.use(cors({
-  origin: allowedOrigins,
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowed = [
+      'https://dice-chess-nine.vercel.app',
+      'https://dice-chess-production.up.railway.app'
+    ];
+    // Accept standard production origins, OR any localhost origin (5173, 5174, etc), OR no-origin (non-browser tools)
+    if (!origin || allowed.includes(origin) || origin.startsWith('http://localhost:')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"],
-    credentials: true
-  }
+  cors: corsOptions
 });
 
 // In-memory session store
@@ -66,9 +70,11 @@ io.on('connection', (socket) => {
       return;
     }
 
+    console.log(`[join_game] Session: ${sessionId}, User: ${userId}`);
     // In PvE, only 'white' should be joined by the actual player.
     // In PvP, the second player joins as 'black'.
     if (game.config.mode === 'pvp' && !game.players.black && game.players.white !== userId) {
+      console.log(`[join_game] Assigning user ${userId} to black`);
       game.joinPlayer(socket, 'black', userId);
     } else if (game.config.mode === 'pve' && game.players.white !== userId) {
       if (callback) callback({ error: 'Match in progress. Play with someone else.' });
@@ -77,11 +83,17 @@ io.on('connection', (socket) => {
       if (callback) callback({ error: 'Match in progress. Play with someone else.' });
       return;
     } else if (game.players.white === userId) {
+      console.log(`[join_game] Re-joining user ${userId} to white`);
       game.sockets.white = socket.id;
+      socket.join(game.sessionId);   // re-join room to receive future broadcasts
       game.attachSocketListeners(socket, userId);
+      game.broadcastState();         // send current state immediately to this player
     } else if (game.players.black === userId) {
+      console.log(`[join_game] Re-joining user ${userId} to black`);
       game.sockets.black = socket.id;
+      socket.join(game.sessionId);   // re-join room to receive future broadcasts
       game.attachSocketListeners(socket, userId);
+      game.broadcastState();         // send current state immediately to this player
     }
 
     if (callback) callback({ success: true, state: game.getState() });
