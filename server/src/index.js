@@ -5,6 +5,13 @@ const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 const GameEngine = require('./game/Engine');
 
+process.on('uncaughtException', (err) => {
+  console.error('FATAL UNCAUGHT EXCEPTION:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('FATAL UNHANDLED REJECTION:', reason);
+});
+
 const app = express();
 
 const corsOptions = {
@@ -132,7 +139,7 @@ app.get('/', (req, res) => {
   res.json({ status: 'Dice Chess server is running' });
 });
 
-const PORT = process.env.PORT || 8080;
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Dice Chess server running on host 0.0.0.0 and port ${PORT}`);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Dice Chess server running on port ${PORT}`);
 });

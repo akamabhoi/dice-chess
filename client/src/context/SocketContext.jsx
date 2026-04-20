@@ -19,7 +19,7 @@ export const SocketProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
     const socketInstance = io(BACKEND_URL);
 
     setSocket(socketInstance);
