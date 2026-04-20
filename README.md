@@ -2,11 +2,12 @@
 
 Welcome to **Dice Chess**, a real-time multiplayer take on the classic game of chess.
 
-**[🕹️ PLAY THE GAME HERE!](https://dice-chess-nine.vercel.app)** 
+**[🕹️ PLAY THE GAME HERE!](https://dice-chess-nine.vercel.app)**
 
 ---
 
 ## 🚀 How to Play Multiplayer
+
 1. Open the [Live Website](https://dice-chess-nine.vercel.app).
 2. Click **Create Game**.
 3. You will be placed into a Lobby and assigned the White pieces.
@@ -16,6 +17,7 @@ Welcome to **Dice Chess**, a real-time multiplayer take on the classic game of c
 ---
 
 ## 🛠️ Technology Stack
+
 This project is built using a modern, scalable split-stack architecture:
 
 - **Frontend:** React, Vite (Hosted on Vercel)
@@ -29,12 +31,14 @@ This project is built using a modern, scalable split-stack architecture:
 If you'd like to run the game and server on your own machine:
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/akamabhoi/dice-chess.git
    cd dice-chess
    ```
 
 2. **Install all dependencies:**
+
    ```bash
    # Install root dependencies
    npm install
@@ -47,9 +51,11 @@ If you'd like to run the game and server on your own machine:
    ```
 
 3. **Start the Development Servers:**
+
    ```bash
    npm run dev
    ```
+
    *(This instantly spins up the Node.js backend on Port 3000 and the Vite frontend on Port 5173).*
 
 4. **Play!**
