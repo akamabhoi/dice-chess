@@ -133,6 +133,6 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
-  console.log(`Dice Chess server running on port ${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Dice Chess server running on host 0.0.0.0 and port ${PORT}`);
 });
