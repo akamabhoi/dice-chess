@@ -2,8 +2,9 @@
   "name": "dice-chess",
   "version": "1.0.0",
   "scripts": {
+    "start": "cd server && npm install && node src/index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd server && /opt/homebrew/bin/node src/index.js",
+    "server": "cd server && node src/index.js",
     "client": "cd client && npm run dev"
   },
   "devDependencies": {
