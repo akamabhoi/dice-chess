@@ -74,20 +74,18 @@ const MoveHistory = ({ history }) => {
      }
    }
    return (
-      <div className="glass-panel" style={{ padding: '1rem', flex: 1, minHeight: '200px', maxHeight: '350px', overflowY: 'auto' }}>
+      <div className="glass-panel area-history" style={{ padding: '1rem' }}>
          <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--accent-cyan)' }}>Move History</h3>
          {turns.length === 0 ? <p style={{ color: 'var(--text-muted)' }}>No moves yet</p> : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-               <tbody>
-                  {turns.map((t, idx) => (
-                     <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                        <td style={{ padding: '0.4rem', color: 'var(--text-muted)', width: '30px' }}>{idx + 1}.</td>
-                        <td style={{ padding: '0.4rem' }}>{t.white}</td>
-                        <td style={{ padding: '0.4rem' }}>{t.black}</td>
-                     </tr>
-                  ))}
-               </tbody>
-            </table>
+            <div className="history-moves-list">
+               {turns.map((t, idx) => (
+                  <div key={idx} className="move-turn">
+                     <span style={{ color: 'var(--text-muted)', width: '30px', flexShrink: 0 }}>{idx + 1}.</span>
+                     <span style={{ padding: '0 0.4rem', flexShrink: 0 }}>{t.white}</span>
+                     <span style={{ padding: '0 0.4rem', flexShrink: 0 }}>{t.black}</span>
+                  </div>
+               ))}
+            </div>
          )}
       </div>
    )
@@ -208,8 +206,10 @@ export default function Game() {
   const capturedPieces = getCapturedPieces(gameState.fen);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1rem', minHeight: '100vh' }}>
-      <div style={{ width: '100%', maxWidth: '900px', display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+    <div className="game-wrapper" style={{ padding: '2rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      
+      {/* Header bar */}
+      <div className="area-header" style={{ width: '100%', maxWidth: '900px', display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', zIndex: 10 }}>
         <button className="btn" style={{ padding: '0.5rem' }} onClick={() => {
           if (socket) socket.emit('leave_game', { sessionId });
           navigate('/');
@@ -221,14 +221,12 @@ export default function Game() {
         )}
       </div>
 
-      <div style={{ width: '100%', maxWidth: '900px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '2rem' }}>
+      <div className="game-grid-container">
         
-        {/* Left Column: Board & Timers */}
-        <div style={{ width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '1rem', flex: '1 1 400px' }}>
-          {/* Opponent Tracker */}
-          <div className="glass-panel" style={{ padding: '0.5rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="left-column">
+          <div className="glass-panel player-tracker area-opponent" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div>Opponent ({opponentColor})</div>
+              <div style={{ fontWeight: 600 }}>Opponent ({opponentColor})</div>
               {renderCaptured(capturedPieces, opponentColor === 'white' ? 'w' : 'b')}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'monospace', fontSize: '1.5rem', color: localTimers[opponentColor] < 60000 ? 'var(--accent-red)' : 'var(--text-main)' }}>
@@ -236,21 +234,21 @@ export default function Game() {
             </div>
           </div>
 
-          {/* Board */}
-          <Board 
-            fen={gameState.fen}
-            playerColor={myColor === 'spectator' ? 'w' : myColor}
-            turnPhase={gameState.turnPhase}
-            turnColor={gameState.turnColor}
-            inCheck={gameState.inCheck}
-            selectedPieceType={selectedPieceType}
-            onMove={handleMove}
-          />
+          <div className="area-board">
+            <Board 
+              fen={gameState.fen}
+              playerColor={myColor === 'spectator' ? 'w' : myColor}
+              turnPhase={gameState.turnPhase}
+              turnColor={gameState.turnColor}
+              inCheck={gameState.inCheck}
+              selectedPieceType={selectedPieceType}
+              onMove={handleMove}
+            />
+          </div>
 
-          {/* Player Tracker */}
-          <div className="glass-panel" style={{ padding: '0.5rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderColor: isMyTurn ? 'var(--accent-cyan)' : 'var(--glass-border)' }}>
+          <div className="glass-panel player-tracker area-player" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderColor: isMyTurn ? 'var(--accent-cyan)' : 'var(--glass-border)' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div>You ({myColorKey})</div>
+              <div style={{ fontWeight: 600 }}>You ({myColorKey})</div>
               {renderCaptured(capturedPieces, myColorKey === 'white' ? 'w' : 'b')}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'monospace', fontSize: '1.5rem', color: (myColorKey !== 'spectator' && localTimers[myColorKey] < 60000) ? 'var(--accent-red)' : 'var(--accent-cyan)' }}>
@@ -259,21 +257,25 @@ export default function Game() {
           </div>
         </div>
 
-        {/* Right Column: Dice Controls & History */}
-        <div style={{ width: '100%', maxWidth: '350px', display: 'flex', flexDirection: 'column', gap: '1rem', flex: '1 1 300px' }}>
-          <DiceController 
-            onRoll={handleRoll}
-            activeRolls={gameState.activeRolls}
-            rollCount={gameState.rollCount}
-            turnPhase={gameState.turnPhase}
-            isMyTurn={isMyTurn}
-            turnColor={gameState.turnColor}
-            inCheck={gameState.inCheck}
-            selectedPieceType={selectedPieceType}
-            onSelectPieceType={setSelectedPieceType}
-          />
+        <div className="right-column">
+          <div className="area-dice">
+            <DiceController 
+              onRoll={handleRoll}
+              activeRolls={gameState.activeRolls}
+              rollCount={gameState.rollCount}
+              turnPhase={gameState.turnPhase}
+              isMyTurn={isMyTurn}
+              turnColor={gameState.turnColor}
+              inCheck={gameState.inCheck}
+              selectedPieceType={selectedPieceType}
+              onSelectPieceType={setSelectedPieceType}
+            />
+          </div>
+
           <MoveHistory history={gameState.history} />
         </div>
+        
+      </div>
 
         {/* Game Over Screen Overlay */}
         {gameState.isGameOver && (
@@ -322,6 +324,5 @@ export default function Game() {
         )}
 
       </div>
-    </div>
   );
 }
