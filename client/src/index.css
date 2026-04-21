@@ -280,12 +280,20 @@ p {
     align-items: center;
     white-space: nowrap;
     padding-bottom: 0.25rem; /* for scrollbar */
+    width: 100%;
+    -webkit-overflow-scrolling: touch; /* Force Safari to allow smooth horizontal touch scrolling */
+    scrollbar-width: none; /* Hide scrollbar in Firefox */
+  }
+  
+  .history-moves-list::-webkit-scrollbar {
+    display: none; /* Hide scrollbar in Chrome/Safari/iOS */
   }
 
   .move-turn {
     border-bottom: none;
     border-right: 1px solid var(--glass-border);
     padding: 0 0.5rem;
+    flex-shrink: 0;
   }
 
   .area-board {
